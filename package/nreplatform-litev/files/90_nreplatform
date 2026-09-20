@@ -1,0 +1,4 @@
+#!/bin/sh
+/etc/init.d/nreplatform enable
+rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
+exit 0

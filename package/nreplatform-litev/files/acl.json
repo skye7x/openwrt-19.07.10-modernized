@@ -1,0 +1,17 @@
+{
+	"nreplatform-litev": {
+		"description": "Grant access to NREPlatform LiteV",
+		"read": {
+			"uci": [ "nreplatform" ],
+			"file": { "/var/run/nreplatform.status": [ "read" ] },
+			"ubus": {
+				"luci-rpc": [ "getNetworkDevices" ],
+				"network.device": [ "status" ],
+				"network.interface": [ "dump" ]
+			}
+		},
+		"write": {
+			"uci": [ "nreplatform" ]
+		}
+	}
+}

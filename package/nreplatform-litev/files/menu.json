@@ -1,0 +1,14 @@
+{
+	"admin/network/nreplatform": {
+		"title": "NREPlatform LiteV",
+		"order": 95,
+		"action": {
+			"type": "view",
+			"path": "nreplatform/ports"
+		},
+		"depends": {
+			"acl": [ "nreplatform-litev" ],
+			"uci": { "nreplatform": true }
+		}
+	}
+}
