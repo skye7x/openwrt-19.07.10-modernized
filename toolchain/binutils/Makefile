@@ -33,6 +33,8 @@ PATCH_DIR:=./patches/$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/toolchain-build.mk
 
+HOST_CONFIGURE_VARS += CFLAGS="$(HOST_CFLAGS) -std=gnu17"
+
 HOST_CONFIGURE_ARGS = \
 	--prefix=$(TOOLCHAIN_DIR) \
 	--build=$(GNU_HOST_NAME) \

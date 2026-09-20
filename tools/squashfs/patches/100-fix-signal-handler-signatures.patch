@@ -1,0 +1,20 @@
+--- a/squashfs-tools/mksquashfs.c	2026-09-19 19:13:50.677968676 +0200
++++ b/squashfs-tools/mksquashfs.c	2026-09-19 19:13:50.677968676 +0200
+@@ -285,7 +285,7 @@
+ }
+ 
+ 
+-void sighandler()
++void sighandler(int sig)
+ {
+ 	if(interrupted == 1)
+ 		restorefs();
+@@ -297,7 +297,7 @@
+ }
+ 
+ 
+-void sighandler2()
++void sighandler2(int sig)
+ {
+ 	EXIT_MKSQUASHFS();
+ }

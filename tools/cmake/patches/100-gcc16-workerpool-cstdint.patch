@@ -1,0 +1,10 @@
+--- a/Source/cmWorkerPool.h
++++ b/Source/cmWorkerPool.h
+@@ -11,6 +11,7 @@
+ 
+ #include <memory> // IWYU pragma: keep
+ #include <stdint.h>
++#include <cstdint>
+ #include <string>
+ #include <utility>
+ #include <vector>

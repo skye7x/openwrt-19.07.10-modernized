@@ -1,0 +1,51 @@
+--- a/squashfs-tools/mksquashfs.c	2019-02-19 02:47:03.000000000 +0100
++++ b/squashfs-tools/mksquashfs.c	2026-09-19 19:14:03.416424256 +0200
+@@ -415,7 +415,7 @@
+ }
+ 
+ 
+-void sighandler()
++void sighandler(int sig)
+ {
+ 	EXIT_MKSQUASHFS();
+ }
+--- a/squashfs-tools/progressbar.c	2019-02-19 02:47:03.000000000 +0100
++++ b/squashfs-tools/progressbar.c	2026-09-19 19:14:03.418006673 +0200
+@@ -52,7 +52,7 @@
+ pthread_mutex_t progress_mutex = PTHREAD_MUTEX_INITIALIZER;
+ 
+ 
+-static void sigwinch_handler()
++static void sigwinch_handler(int sig)
+ {
+ 	struct winsize winsize;
+ 
+@@ -66,7 +66,7 @@
+ }
+ 
+ 
+-static void sigalrm_handler()
++static void sigalrm_handler(int sig)
+ {
+ 	rotate = (rotate + 1) % 4;
+ }
+--- a/squashfs-tools/unsquashfs.c	2019-02-19 02:47:03.000000000 +0100
++++ b/squashfs-tools/unsquashfs.c	2026-09-19 19:14:03.418852849 +0200
+@@ -136,7 +136,7 @@
+ }
+ 
+ 
+-void sigwinch_handler()
++void sigwinch_handler(int sig)
+ {
+ 	struct winsize winsize;
+ 
+@@ -150,7 +150,7 @@
+ }
+ 
+ 
+-void sigalrm_handler()
++void sigalrm_handler(int sig)
+ {
+ 	rotate = (rotate + 1) % 4;
+ }

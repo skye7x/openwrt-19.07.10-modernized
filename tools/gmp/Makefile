@@ -21,6 +21,10 @@ include $(INCLUDE_DIR)/host-build.mk
 
 unexport CFLAGS
 
+# GCC 15/16 default to C23, where "f()" means "f(void)": configure tests in
+# GMP 6.1.2 (K&R style) then fail and configure reports "no working compiler".
+HOST_CFLAGS += -std=gnu17
+
 HOST_CONFIGURE_ARGS += \
 	--enable-static \
 	--disable-shared \

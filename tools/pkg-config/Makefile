@@ -15,6 +15,8 @@ PKG_HASH:=6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591
 
 HOST_BUILD_PARALLEL:=1
 
+HOST_CFLAGS += -std=gnu17
+
 include $(INCLUDE_DIR)/host-build.mk
 
 unexport PKG_CONFIG

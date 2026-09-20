@@ -1,0 +1,14 @@
+--- a/config.h.in
++++ b/config.h.in
+@@ -116,9 +116,11 @@
+ 
+ /* Define to empty if `const' does not conform to ANSI C. */
+ #undef const
+ 
+ /* Define to `size_t' if <sys/types.h> does not define. */
++#ifndef HAVE_STDDEF_H
+ #undef ptrdiff_t
++#endif
+ 
+ /* Define to `unsigned' if <sys/types.h> does not define. */
+ #undef size_t

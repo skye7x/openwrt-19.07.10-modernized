@@ -30,7 +30,7 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
 
 TARGET_CFLAGS += $(FPIC) -Wno-implicit-fallthrough
-HOST_CFLAGS += -Wno-implicit-fallthrough
+HOST_CFLAGS += -Wno-implicit-fallthrough -Wno-error=calloc-transposed-args
 HOST_BUILD_PREFIX:=$(STAGING_DIR_HOST)
 
 define Package/libjson-c

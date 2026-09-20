@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2018 Yousong Zhou <yszhou4tech@gmail.com>
 #
@@ -20,7 +20,7 @@ import ssl
 import subprocess
 import sys
 import time
-import urllib2
+import urllib.request as urllib2
 
 TMPDIR = os.environ.get('TMP_DIR') or '/tmp'
 TMPDIR_DL = os.path.join(TMPDIR, 'dl')
@@ -194,7 +194,7 @@ class GitHubCommitTsCache(object):
             self.cache[k] = (ts, updated)
 
     def _cache_flush(self, fout):
-        cache = sorted(self.cache.iteritems(), cmp=lambda a, b: b[1][1] - a[1][1])
+        cache = sorted(self.cache.items(), key=lambda a: a[1][1], reverse=True)
         cache = cache[:self.__cachen]
         self.cache = {}
         os.ftruncate(fout.fileno(), 0)

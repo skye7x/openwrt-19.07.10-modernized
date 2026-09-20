@@ -18,4 +18,8 @@ PKG_HASH:=7ee4abbcfac03d8a6e1a8a3440558a3d239d6b858585063e745c760957725ecc
 
 include $(INCLUDE_DIR)/host-build.mk
 
+# GCC 15/16 default to C23: old autoconf tests (AC_HEADER_STDC) fail, STDC_HEADERS
+# stays undefined, ptrdiff_t gets #define'd to size_t -> "conflicting types for size_t".
+HOST_CFLAGS += -std=gnu17
+
 $(eval $(call HostBuild))

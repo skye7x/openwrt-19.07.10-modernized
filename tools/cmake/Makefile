@@ -43,6 +43,10 @@ HOST_CONFIGURE_ARGS := \
 	$(if $(MAKE_JOBSERVER),--parallel="$(MAKE_JOBSERVER)") \
 	--prefix=$(STAGING_DIR_HOST)
 
+# Precautionary (untested on GCC 16): build bundled C code (libuv, curl, libarchive) as gnu17.
+# Only CFLAGS is touched; CXXFLAGS above stays as is.
+HOST_CONFIGURE_VARS += CFLAGS="$(HOST_CFLAGS) -std=gnu17"
+
 ifneq ($(findstring c,$(OPENWRT_VERBOSE)),)
   HOST_MAKE_FLAGS += VERBOSE=1
 endif

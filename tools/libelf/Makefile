@@ -20,12 +20,17 @@ HOST_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/host-build.mk
 
+HOST_CFLAGS += -std=gnu17
+HOST_CFLAGS += -Wno-error=implicit-int
+HOST_CFLAGS += -Wno-error=implicit-function-declaration
+
 HOST_CONFIGURE_ARGS += \
 	--disable-shared \
 	--enable-elf64
 
 define Host/Configure
         (cd $(HOST_BUILD_DIR)/$(3); \
+                CFLAGS="$(HOST_CFLAGS)" \
                 $(HOST_CONFIGURE_CMD) \
                 $(HOST_CONFIGURE_ARGS); \
         )
