@@ -1,49 +1,16 @@
-  _______                     ________        __
- |       |.-----.-----.-----.|  |  |  |.----.|  |_
- |   -   ||  _  |  -__|     ||  |  |  ||   _||   _|
- |_______||   __|_____|__|__||________||__|  |____|
-          |__| W I R E L E S S   F R E E D O M
- -----------------------------------------------------
-
-This is the buildsystem for the OpenWrt Linux distribution.
-
-To build your own firmware you need a Linux, BSD or MacOSX system (case
-sensitive filesystem required). Cygwin is unsupported because of the lack
-of a case sensitive file system.
-
-You need gcc, binutils, bzip2, flex, python, perl, make, find, grep, diff,
-unzip, gawk, getopt, subversion, libz-dev and libc headers installed.
-
-1. Run "./scripts/feeds update -a" to obtain all the latest package definitions
-defined in feeds.conf / feeds.conf.default
-
-2. Run "./scripts/feeds install -a" to install symlinks for all obtained
-packages into package/feeds/
-
-3. Run "make menuconfig" to select your preferred configuration for the
-toolchain, target system & firmware packages.
-
-4. Run "make" to build your firmware. This will download all sources, build
-the cross-compile toolchain and then cross-compile the Linux kernel & all
-chosen applications for your target system.
-
-Sunshine!
-	Your OpenWrt Community
-	http://www.openwrt.org
-
 # OpenWrt 19.07.10 Modernized
 
-A modernized and maintained build of **OpenWrt 19.07.10** adapted for building on modern Linux hosts and contemporary GCC/Python toolchains.
+A modernized build of **OpenWrt 19.07.10** adapted for building on modern Linux hosts and contemporary GCC/Python toolchains.
 
-This repository is based on the original OpenWrt 19.07.10 source tree and contains compatibility fixes required to build this legacy release with a modern development environment.
+This repository is based on the original OpenWrt 19.07.10 source tree and contains compatibility fixes required to build this legacy release with modern development environments.
 
-The goal is to keep the original OpenWrt 19.07.10 target platform usable while minimizing changes to the original OpenWrt architecture and build system.
+The goal is to keep the original OpenWrt 19.07.10 platform usable while minimizing changes to the original OpenWrt architecture and target-side behavior.
+
+> **Status:** Successfully tested with a full OpenWrt 19.07.10 build for the **Linksys WRT160NL**.
 
 ## Why this repository exists
 
-OpenWrt 19.07.10 is a legacy release and its original build system predates modern Linux distributions and current compiler versions.
-
-When building it on a modern host, several components fail because of changes in:
+OpenWrt 19.07.10 was released for much older host environments. Building it on a current Linux distribution can fail because of changes in:
 
 * GCC diagnostics and language defaults
 * newer C/C++ compiler behavior
@@ -53,52 +20,54 @@ When building it on a modern host, several components fail because of changes in
 * stricter compiler warnings
 * changes in bundled third-party build tools
 
-This repository contains compatibility fixes for those problems.
+This repository provides compatibility fixes for these problems while retaining the original OpenWrt 19.07.10 base.
 
-## Base version
+## Base
 
-* OpenWrt: **19.07.10**
-* Linux kernel: **4.14.275**
-* Target example: **Atheros AR71xx / MIPS 24Kc**
-* Example device: **Linksys WRT160NL**
-* libc: **musl**
+* **OpenWrt:** 19.07.10
+* **Linux kernel:** 4.14.275
+* **Target:** Atheros AR7xxx/AR9xxx
+* **Subtarget:** Generic
+* **Architecture:** MIPS 24Kc
+* **libc:** musl
+* **Test device:** Linksys WRT160NL
 
 ## Modernization changes
 
 ### GCC 15/16 compatibility
 
-Several legacy components fail with current GCC versions because warnings and language behavior have become stricter.
+Several legacy components require adjustments for current GCC versions.
 
-Compatibility changes were added for:
+Changes include:
 
-* GCC 16 `nodiscard` attribute handling in `m4`
-* legacy C code relying on implicit declarations
-* old C/C++ constructs rejected by modern compilers
-* stricter compiler diagnostics
+* compatibility with GCC 16 `nodiscard` handling in `m4`
+* fixes for legacy C code relying on implicit declarations
+* compatibility with stricter compiler diagnostics
+* adjustments for old C/C++ code rejected by modern compilers
 
 ### Python 3 build support
 
 Legacy OpenWrt build tools contain Python 2-era assumptions.
 
-The SCons Python wrapper was updated to use Python 3, allowing the legacy build system to operate on systems where Python 2 is no longer available.
+The SCons Python wrapper was updated to use Python 3, allowing the build system to operate on modern distributions where Python 2 is no longer available.
 
-### pkg-config / GLib
+### pkg-config
 
-The bundled `pkg-config` build was adjusted for modern GCC by explicitly using a GNU C standard compatible with the legacy source.
+The bundled `pkg-config` build was adjusted to use a compatible GNU C language standard with modern GCC.
 
 ### e2fsprogs
 
-Host compilation was adjusted to use a compatible GNU C language standard with modern GCC.
+Host compilation was adjusted for compatibility with modern GCC and current C language defaults.
 
 ### libelf
 
-The host build was adjusted to pass modern compiler flags correctly and tolerate legacy implicit declarations that would otherwise be treated as fatal errors.
+The host build was adjusted to correctly pass modern compiler flags and tolerate legacy implicit declarations that would otherwise cause compilation failures.
 
 ### CMake
 
-OpenWrt 19.07.10 contains an old CMake version.
+OpenWrt 19.07.10 contains an old CMake release.
 
-Compatibility patches were added for modern compilers, including:
+Compatibility patches were added for modern host compilers, including:
 
 * disabling the problematic GHS bootstrap path
 * fixing missing `cstdint` usage in the worker pool implementation
@@ -113,44 +82,35 @@ Compatibility fixes were added for modern system headers, including `ptrdiff_t` 
 
 ### jsonfilter
 
-The bundled Lemon parser code contains old-style declarations that conflict with modern compiler behavior.
+The bundled Lemon parser code contains old-style function declarations that conflict with modern compiler behavior.
 
-Explicit function prototypes were added to allow jsonfilter to compile with modern GCC.
+Explicit function prototypes were added so `jsonfilter` can compile with modern GCC.
 
 ### squashfs / squashfskit4
 
 Legacy signal-handler declarations were updated to match modern compiler expectations.
 
-### iproute2 / libcap
+### iproute2
 
 The legacy OpenWrt package definitions for `ip-full` and `tc` referenced `libcap`.
 
-The dependency was removed so these packages can be built without requiring the unavailable legacy `libcap` package in this OpenWrt 19.07.10 tree.
+Those package dependencies were removed because the legacy OpenWrt 19.07.10 package tree does not provide the required `libcap` package.
 
 The existing optional capability detection in iproute2 remains separate from the OpenWrt package dependency.
 
 ## Design goals
 
-This repository intentionally does **not** attempt to port OpenWrt 19.07.10 into a completely new OpenWrt release.
+This project is **not** intended to turn OpenWrt 19.07.10 into a completely new OpenWrt release.
 
-The goal is instead:
+The goals are:
 
 1. Keep the original OpenWrt 19.07.10 base.
-2. Make the build work with modern host systems.
-3. Keep changes small and isolated.
+2. Make the legacy build system usable on modern Linux hosts.
+3. Keep compatibility changes small and isolated.
 4. Avoid unnecessary changes to target-side OpenWrt behavior.
-5. Make the repository reusable as a base for other projects.
+5. Provide a reusable base for other projects.
 
 Project-specific applications and packages should remain outside this repository.
-
-For example, NREPlatform uses this repository as its OpenWrt base:
-
-```text
-NREPlatform
-└── openwrt-19.07.10
-        ↓
-    openwrt-19.07.10-modernized
-```
 
 ## Building
 
@@ -161,19 +121,26 @@ git clone https://github.com/skye7x/openwrt-19.07.10-modernized.git
 cd openwrt-19.07.10-modernized
 ```
 
+Update feeds if required by your configuration:
+
+```bash
+./scripts/feeds update -a
+./scripts/feeds install -a
+```
+
 Configure the target:
 
 ```bash
 make menuconfig
 ```
 
-Then build:
+Build:
 
 ```bash
 make -j$(nproc)
 ```
 
-For verbose builds:
+For a verbose build:
 
 ```bash
 make -j$(nproc) V=s
@@ -181,7 +148,7 @@ make -j$(nproc) V=s
 
 ## Linksys WRT160NL
 
-The repository has been tested by building OpenWrt 19.07.10 for:
+The modernization work has been validated with a complete OpenWrt 19.07.10 build for:
 
 * Target System: `Atheros AR7xxx/AR9xxx`
 * Subtarget: `Generic`
@@ -189,7 +156,7 @@ The repository has been tested by building OpenWrt 19.07.10 for:
 * Architecture: `mips_24kc`
 * Kernel: `4.14.275`
 
-Example output:
+Generated firmware:
 
 ```text
 bin/targets/ar71xx/generic/
@@ -197,36 +164,67 @@ bin/targets/ar71xx/generic/
 └── openwrt-ar71xx-generic-wrt160nl-squashfs-sysupgrade.bin
 ```
 
+The build successfully produced the kernel, target packages, root filesystem and final SquashFS firmware images.
+
 ## NREPlatform
 
-This repository is used as the modernized OpenWrt base for the NREPlatform project.
+This repository is used as the modernized OpenWrt base for **NREPlatform**.
 
-NREPlatform adds a separate OpenWrt package containing the NRE daemon and its procd service integration.
+NREPlatform adds its own OpenWrt package containing the NRE daemon and `procd` service integration.
 
-The NRE package itself is intentionally **not part of this repository**.
+The NREPlatform package is intentionally **not included in this repository**.
 
-Repository:
+NREPlatform:
 
 ```text
 https://github.com/skye7x/NREPlatform
 ```
 
+Example project structure:
+
+```text
+NREPlatform/
+├── src/
+├── package/
+└── openwrt-19.07.10/
+        ↓
+    skye7x/openwrt-19.07.10-modernized
+```
+
+This allows the same modernized OpenWrt base to be reused by other projects without coupling those projects to NREPlatform.
+
+## Reusing this fork
+
+The repository can be used as a base for other projects that require OpenWrt 19.07.10.
+
+For example:
+
+```bash
+git clone https://github.com/skye7x/openwrt-19.07.10-modernized.git
+```
+
+Projects can then add their own packages, configuration and device-specific changes without modifying the common modernization layer.
+
 ## Scope
 
-This project focuses on keeping the legacy OpenWrt 19.07.10 build system usable on modern development hosts.
+This project focuses on maintaining build compatibility for the legacy OpenWrt 19.07.10 release.
 
 It is not intended to replace newer OpenWrt releases.
 
-Use newer OpenWrt releases when hardware support and project requirements allow it. This repository exists for projects that specifically need the OpenWrt 19.07.10 base or legacy target support.
+When possible, newer OpenWrt releases should be preferred. This repository exists for projects that specifically require the OpenWrt 19.07.10 base, legacy targets or compatibility with existing hardware/software.
 
 ## Status
 
-The modernization work has been validated by successfully building OpenWrt 19.07.10 for the Linksys WRT160NL, including:
+The modernization work has been successfully validated with a complete OpenWrt 19.07.10 build for the Linksys WRT160NL.
 
-* kernel
+Verified build stages include:
+
+* host tools
+* cross-compiler toolchain
+* Linux kernel
 * target packages
 * root filesystem
-* squashfs images
+* SquashFS filesystem
 * factory image
 * sysupgrade image
 
@@ -234,7 +232,6 @@ The modernization work has been validated by successfully building OpenWrt 19.07
 
 This repository contains OpenWrt 19.07.10 and associated upstream components.
 
-Original licensing terms from the respective projects remain applicable.
+The original licenses of OpenWrt and its individual components remain applicable.
 
-See the individual source files and package metadata for detailed license information.
-
+See the individual source files and package metadata for detailed licensing information.
