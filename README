@@ -31,4 +31,210 @@ Sunshine!
 	Your OpenWrt Community
 	http://www.openwrt.org
 
+# OpenWrt 19.07.10 Modernized
+
+A modernized and maintained build of **OpenWrt 19.07.10** adapted for building on modern Linux hosts and contemporary GCC/Python toolchains.
+
+This repository is based on the original OpenWrt 19.07.10 source tree and contains compatibility fixes required to build this legacy release with a modern development environment.
+
+The goal is to keep the original OpenWrt 19.07.10 target platform usable while minimizing changes to the original OpenWrt architecture and build system.
+
+## Why this repository exists
+
+OpenWrt 19.07.10 is a legacy release and its original build system predates modern Linux distributions and current compiler versions.
+
+When building it on a modern host, several components fail because of changes in:
+
+* GCC diagnostics and language defaults
+* newer C/C++ compiler behavior
+* Python 3
+* modern CMake
+* modern system headers
+* stricter compiler warnings
+* changes in bundled third-party build tools
+
+This repository contains compatibility fixes for those problems.
+
+## Base version
+
+* OpenWrt: **19.07.10**
+* Linux kernel: **4.14.275**
+* Target example: **Atheros AR71xx / MIPS 24Kc**
+* Example device: **Linksys WRT160NL**
+* libc: **musl**
+
+## Modernization changes
+
+### GCC 15/16 compatibility
+
+Several legacy components fail with current GCC versions because warnings and language behavior have become stricter.
+
+Compatibility changes were added for:
+
+* GCC 16 `nodiscard` attribute handling in `m4`
+* legacy C code relying on implicit declarations
+* old C/C++ constructs rejected by modern compilers
+* stricter compiler diagnostics
+
+### Python 3 build support
+
+Legacy OpenWrt build tools contain Python 2-era assumptions.
+
+The SCons Python wrapper was updated to use Python 3, allowing the legacy build system to operate on systems where Python 2 is no longer available.
+
+### pkg-config / GLib
+
+The bundled `pkg-config` build was adjusted for modern GCC by explicitly using a GNU C standard compatible with the legacy source.
+
+### e2fsprogs
+
+Host compilation was adjusted to use a compatible GNU C language standard with modern GCC.
+
+### libelf
+
+The host build was adjusted to pass modern compiler flags correctly and tolerate legacy implicit declarations that would otherwise be treated as fatal errors.
+
+### CMake
+
+OpenWrt 19.07.10 contains an old CMake version.
+
+Compatibility patches were added for modern compilers, including:
+
+* disabling the problematic GHS bootstrap path
+* fixing missing `cstdint` usage in the worker pool implementation
+
+### GMP
+
+The host build configuration was adjusted for compatibility with modern host toolchains.
+
+### bc
+
+Compatibility fixes were added for modern system headers, including `ptrdiff_t` handling.
+
+### jsonfilter
+
+The bundled Lemon parser code contains old-style declarations that conflict with modern compiler behavior.
+
+Explicit function prototypes were added to allow jsonfilter to compile with modern GCC.
+
+### squashfs / squashfskit4
+
+Legacy signal-handler declarations were updated to match modern compiler expectations.
+
+### iproute2 / libcap
+
+The legacy OpenWrt package definitions for `ip-full` and `tc` referenced `libcap`.
+
+The dependency was removed so these packages can be built without requiring the unavailable legacy `libcap` package in this OpenWrt 19.07.10 tree.
+
+The existing optional capability detection in iproute2 remains separate from the OpenWrt package dependency.
+
+## Design goals
+
+This repository intentionally does **not** attempt to port OpenWrt 19.07.10 into a completely new OpenWrt release.
+
+The goal is instead:
+
+1. Keep the original OpenWrt 19.07.10 base.
+2. Make the build work with modern host systems.
+3. Keep changes small and isolated.
+4. Avoid unnecessary changes to target-side OpenWrt behavior.
+5. Make the repository reusable as a base for other projects.
+
+Project-specific applications and packages should remain outside this repository.
+
+For example, NREPlatform uses this repository as its OpenWrt base:
+
+```text
+NREPlatform
+└── openwrt-19.07.10
+        ↓
+    openwrt-19.07.10-modernized
+```
+
+## Building
+
+Clone the repository:
+
+```bash
+git clone https://github.com/skye7x/openwrt-19.07.10-modernized.git
+cd openwrt-19.07.10-modernized
+```
+
+Configure the target:
+
+```bash
+make menuconfig
+```
+
+Then build:
+
+```bash
+make -j$(nproc)
+```
+
+For verbose builds:
+
+```bash
+make -j$(nproc) V=s
+```
+
+## Linksys WRT160NL
+
+The repository has been tested by building OpenWrt 19.07.10 for:
+
+* Target System: `Atheros AR7xxx/AR9xxx`
+* Subtarget: `Generic`
+* Target Profile: `Linksys WRT160NL`
+* Architecture: `mips_24kc`
+* Kernel: `4.14.275`
+
+Example output:
+
+```text
+bin/targets/ar71xx/generic/
+├── openwrt-ar71xx-generic-wrt160nl-squashfs-factory.bin
+└── openwrt-ar71xx-generic-wrt160nl-squashfs-sysupgrade.bin
+```
+
+## NREPlatform
+
+This repository is used as the modernized OpenWrt base for the NREPlatform project.
+
+NREPlatform adds a separate OpenWrt package containing the NRE daemon and its procd service integration.
+
+The NRE package itself is intentionally **not part of this repository**.
+
+Repository:
+
+```text
+https://github.com/skye7x/NREPlatform
+```
+
+## Scope
+
+This project focuses on keeping the legacy OpenWrt 19.07.10 build system usable on modern development hosts.
+
+It is not intended to replace newer OpenWrt releases.
+
+Use newer OpenWrt releases when hardware support and project requirements allow it. This repository exists for projects that specifically need the OpenWrt 19.07.10 base or legacy target support.
+
+## Status
+
+The modernization work has been validated by successfully building OpenWrt 19.07.10 for the Linksys WRT160NL, including:
+
+* kernel
+* target packages
+* root filesystem
+* squashfs images
+* factory image
+* sysupgrade image
+
+## License
+
+This repository contains OpenWrt 19.07.10 and associated upstream components.
+
+Original licensing terms from the respective projects remain applicable.
+
+See the individual source files and package metadata for detailed license information.
 
